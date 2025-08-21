@@ -7,6 +7,7 @@ import RegisterScreen from '../screens/RegisterScreen';
 import ForgotPasswordScreen from '../screens/ForgotPasswordScreen';
 import StudentPortalScreen from '../screens/StudentPortalScreen';
 import TeacherPortalScreen from '../screens/TeacherPortalScreen';
+import { useAuth } from '../context/AuthContext';
 
 const RootStack = createNativeStackNavigator();
 const TopTab = createMaterialTopTabNavigator();
@@ -27,11 +28,17 @@ function AuthTabs() {
 }
 
 export default function RootNavigator() {
+  const { userRole } = useAuth();
+
   return (
     <RootStack.Navigator screenOptions={{ headerShown: false }}>
-      <RootStack.Screen name="Auth" component={AuthTabs} />
-      <RootStack.Screen name="PortalEstudante" component={StudentPortalScreen} />
-      <RootStack.Screen name="PortalProfessor" component={TeacherPortalScreen} />
+      {userRole === 'ALUNO' && (
+        <RootStack.Screen name="PortalEstudante" component={StudentPortalScreen} />
+      )}
+      {userRole === 'PROFESSOR' && (
+        <RootStack.Screen name="PortalProfessor" component={TeacherPortalScreen} />
+      )}
+      {!userRole && <RootStack.Screen name="Auth" component={AuthTabs} />}
     </RootStack.Navigator>
   );
 }
